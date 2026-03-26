@@ -1,0 +1,31 @@
+# Data files - do not commit raw data to GitHub
+data/raw/
+data/processed/
+*.parquet
+*.csv
+*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Outputs (optional - keep figures, ignore model weights)
+outputs/models/
+*.pkl
+*.h5
+*.pt
+
+# Keep these
+!data/.gitkeep
+!outputs/figures/.gitkeep

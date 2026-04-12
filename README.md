@@ -26,11 +26,12 @@ Data Collection → NLP Preprocessing → Sentiment Analysis → Feature Enginee
 | Step | Status | Notebook |
 |------|--------|----------|
 | 1. Data Collection & Layer 2 Merge | ✅ Done | `01_data_collection_layer2_merge.ipynb` |
-| 2. EDA | 🔜 Next | `02_eda.ipynb` |
-| 3. NLP Preprocessing | 🔜 Pending | `03_nlp_preprocessing.ipynb` |
-| 4. Sentiment Analysis (FinBERT) | 🔜 Pending | `04_sentiment_analysis.ipynb` |
-| 5. Feature Engineering | 🔜 Pending | `05_feature_engineering.ipynb` |
-| 6. Market Prediction | 🔜 Pending | `06_market_prediction.ipynb` |
+| 2. EDA — FinBERT Pilot (200-row sample) | ✅ Done | `02_eda_finbert_pilot.ipynb` |
+| 3. NLP Cleaning by Source | ✅ Done | `03_nlp_cleaning_by_source.ipynb` |
+| 4. NLP Preprocessing (full pipeline) | 🔜 Next | `04_nlp_preprocessing.ipynb` |
+| 5. Sentiment Analysis (FinBERT — 87K rows) | 🔜 Pending | `05_sentiment_analysis.ipynb` |
+| 6. Feature Engineering | 🔜 Pending | `06_feature_engineering.ipynb` |
+| 7. Market Prediction | 🔜 Pending | `07_market_prediction.ipynb` |
 
 ---
 
@@ -76,14 +77,14 @@ pfe-tsla-sentiment/
 │   └── processed/           # Post-NLP outputs (future)
 ├── notebooks/
 │   ├── 01_data_collection_layer2_merge.ipynb
-│   ├── 02_eda.ipynb
-│   ├── 03_nlp_preprocessing.ipynb
-│   ├── 04_sentiment_analysis.ipynb
-│   ├── 05_feature_engineering.ipynb
-│   └── 06_market_prediction.ipynb
+│   ├── 02_eda_finbert_pilot.ipynb
+│   ├── 03_nlp_cleaning_by_source.ipynb
+│   ├── 04_nlp_preprocessing.ipynb
+│   ├── 05_sentiment_analysis.ipynb
+│   ├── 06_feature_engineering.ipynb
+│   └── 07_market_prediction.ipynb
 ├── src/
 │   ├── data/
-│   │   ├── layer1_schemas.py
 │   │   └── layer2_merge.py
 │   ├── nlp/
 │   ├── sentiment/

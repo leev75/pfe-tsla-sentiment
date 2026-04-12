@@ -20,6 +20,10 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Local project files
+CLAUDE.md
+Audit.txt
+
 # Outputs (optional - keep figures, ignore model weights)
 outputs/models/
 *.pkl

@@ -1,98 +1,100 @@
-# PFE — A Machine Learning Approach to Financial News Sentiment and Market Trend Prediction
+# A Machine Learning Approach to Financial News Sentiment and Market Trend Prediction
 
-**Student:** Khelil Dhiaeddine  
-**Supervisor:** Nesrine Lahiani  
-**Teacher:** Hadjer Ykhlef  
-**Focus Asset:** Tesla (TSLA) | **Time Window:** January 2020 – December 2023
+End-to-end ML pipeline that combines financial sentiment analysis with market prediction, applied to Tesla (TSLA) stock, January 2020 – December 2023.
+
+**Author:** Khelil Dhiaeddine — 4th-year Data Science Engineering, University of Blida 1
+**Supervisor:** Nesrine Lahiani
+**Teacher:** Hadjer Ykhlef
+
+🔗 **Live dashboard:** [Streamlit App](https://pfe-tsla-sentiment-khpifztqkqztwuosxsmtc4.streamlit.app)
 
 ---
 
-## Project Overview
+## Overview
 
-This project builds a financial sentiment analysis and market prediction system targeting Tesla (TSLA), anchored by the academically defensible **"Musk Effect"** — documented price movements driven by Elon Musk's public statements.
+This project builds a full pipeline — from raw text collection to trading-signal generation — to test whether financial sentiment (news, Reddit, Twitter) adds predictive value on top of price-based features for TSLA stock, using rigorous trading-focused evaluation (Sharpe ratio, walk-forward CV) instead of accuracy alone.
 
-### Core Novelties
-- **Novelty 1:** FinBERT replacing TF-IDF for sentiment classification, with sentiment momentum and lag feature engineering
-- **Novelty 2:** LSTM with Bahdanau Attention mechanism for trading signal generation with backtesting evaluation (Sharpe Ratio, Directional Accuracy)
+### Key novelties
+
+1. **FinBERT vs. TF-IDF, with domain-shift quantified** — FinBERT reaches macro-F1 = 0.403 on a 200-doc manual TSLA test set (vs. TF-IDF+LR = 0.380, TF-IDF+SVM = 0.364, VADER = 0.355), and we explicitly measure the in-domain → out-of-domain performance drop for classical models (LR: −0.427pp, SVM: −0.443pp).
+2. **LSTM + Bahdanau Attention evaluated with trading metrics** — Sharpe ratio and walk-forward cross-validation, not just classification accuracy.
+3. **Four-source corpus** (news, Reddit, general Twitter, Musk-specific Twitter) — 85,649 documents total, with the Musk stream architecturally separated as an independent signal.
+
+### Research gaps addressed
+
+| Gap | Description |
+|---|---|
+| Gap 1 | Prior work relies on single-source datasets |
+| Gap 2 | Prior evaluations lack trading-relevant metrics |
+| Gap 3 | Domain-shift cost of sentiment models is rarely quantified |
 
 ---
 
 ## Pipeline
 
 ```
-Data Collection → NLP Preprocessing → Sentiment Analysis → Feature Engineering → Market Prediction
+1. Data Collection      → news, Reddit, Twitter (general + Musk), stock prices
+2. NLP Preprocessing    → cleaning, tokenization, lemmatization, NER
+3. Sentiment Analysis   → FinBERT / TF-IDF+LR / TF-IDF+SVM / VADER
+4. Feature Engineering  → 237 features (same-day, lag, rolling, momentum, EMA)
+5. Market Prediction    → XGBoost, Random Forest, LSTM, LSTM+Attention
 ```
 
-| Step | Status | Notebook |
-|------|--------|----------|
-| 1. Data Collection & Layer 2 Merge | ✅ Done | `01_data_collection_layer2_merge.ipynb` |
-| 2. EDA — FinBERT Pilot (200-row sample) | ✅ Done | `02_eda_finbert_pilot.ipynb` |
-| 3. NLP Cleaning by Source | ✅ Done | `03_nlp_cleaning_by_source.ipynb` |
-| 4. NLP Preprocessing (full pipeline) | 🔜 Next | `04_nlp_preprocessing.ipynb` |
-| 5. Sentiment Analysis (FinBERT — 87K rows) | 🔜 Pending | `05_sentiment_analysis.ipynb` |
-| 6. Feature Engineering | 🔜 Pending | `06_feature_engineering.ipynb` |
-| 7. Market Prediction | 🔜 Pending | `07_market_prediction.ipynb` |
-
----
-
-## Data Architecture
-
-### Layer 1 — Source-Specific Raw Schemas
-Preserves engagement metadata per source for later feature engineering.
-
-| Source | Key Fields |
-|--------|-----------|
-| `reddit_s1` | title, selftext, score, upvote_ratio, num_comments, subreddit |
-| `reddit_s2_2022` | title, text, score, num_comments, created_utc |
-| `news` | article_id, headline, content, source_name, author |
-| `twitter` | tweet_id, text, retweet_count, like_count, username |
-
-### Layer 2 — Unified NLP-Ready Schema
-Six-field Parquet schema feeding the NLP pipeline.
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `doc_id` | string | Unique document identifier |
-| `published_at` | datetime (UTC) | Normalized timestamp |
-| `source` | string | Origin source tag |
-| `text` | string | Cleaned concatenated text |
-| `ticker` | string | Stock ticker (TSLA) |
-| `url` | string | Source URL (nullable) |
-
-**Final Layer 2 volume: ~87,196 documents** across ~1,000 trading days
-
----
-
-## Repository Structure
+### Repo structure
 
 ```
-pfe-tsla-sentiment/
-├── README.md
-├── .gitignore
+├── notebooks/              # Kaggle notebooks, one per pipeline step
+├── figures/                # Generated plots (confusion matrices, F1, kappa, attention, etc.)
+├── docs/                   # Thesis (LaTeX + PDF)
+├── dashboard/              # Streamlit app source
 ├── requirements.txt
-├── data/
-│   ├── raw/
-│   │   ├── layer1/          # Source-specific raw Parquet files
-│   │   └── layer2/          # Unified layer2_unified_final.parquet
-│   └── processed/           # Post-NLP outputs (future)
-├── notebooks/
-│   ├── 01_data_collection_layer2_merge.ipynb
-│   ├── 02_eda_finbert_pilot.ipynb
-│   ├── 03_nlp_cleaning_by_source.ipynb
-│   ├── 04_nlp_preprocessing.ipynb
-│   ├── 05_sentiment_analysis.ipynb
-│   ├── 06_feature_engineering.ipynb
-│   └── 07_market_prediction.ipynb
-├── src/
-│   ├── data/
-│   │   └── layer2_merge.py
-│   ├── nlp/
-│   ├── sentiment/
-│   └── prediction/
-├── outputs/
-│   └── figures/
-└── docs/
-    └── methodology.md
+└── README.md
+```
+
+---
+
+## Results summary
+
+**Sentiment classification** (200-doc manual TSLA test set):
+
+| Model | Macro-F1 |
+|---|---|
+| FinBERT | 0.403 [0.33, 0.47] |
+| TF-IDF + LR | 0.380 |
+| TF-IDF + SVM | 0.364 |
+| VADER | 0.355 |
+
+**Market prediction** (2023 test set, Sharpe ratio):
+
+| Model | Sharpe | Directional Accuracy | F1 |
+|---|---|---|---|
+| **XGBoost (price-only)** | **5.71** | 0.530 | 0.400 |
+| Random Forest (price-only) | 4.65 | — | — |
+| LSTM + Attention (price-only) | 3.65 | — | — |
+| LSTM (price-only) | 3.49 | — | — |
+| Buy-and-hold | 2.47 | — | — |
+
+Full-feature models (sentiment + price) underperform price-only models across the board in 2023 — attributed to a market regime shift and a Twitter coverage gap that let sentiment features add noise rather than signal. The attention-based full-feature model collapses to zero BUY predictions, a curse-of-dimensionality effect (237 features vs. ~750 training rows).
+
+Full methodology, dataset statistics, and discussion are in [`docs/thesis.pdf`](docs/thesis.pdf).
+
+---
+
+## Dashboard
+
+A 4-page Streamlit app for exploring the results interactively:
+
+- **Overview** — corpus and dataset summary
+- **Sentiment Analysis** — model comparison on the manual test set
+- **Model Comparison** — prediction model performance (Sharpe, DA, F1)
+- **Trading Signals** — BUY/SELL/HOLD signals over the test period
+
+Reads from `features_targets_final_clean.parquet`.
+
+Run locally:
+```bash
+pip install -r requirements.txt
+streamlit run dashboard/app.py
 ```
 
 ---
@@ -100,9 +102,36 @@ pfe-tsla-sentiment/
 ## Setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/pfe-tsla-sentiment.git
-cd pfe-tsla-sentiment
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
 pip install -r requirements.txt
 ```
 
-Place your raw data files in `data/raw/layer1/` then run notebooks in order.
+Notebooks were developed on Kaggle (T4 GPU) with hardcoded `/kaggle/input/` and `/kaggle/working/` paths — adjust paths if running elsewhere.
+
+**Core dependencies:** Python 3.12, PyTorch 2.10 (cu128), Transformers 5.0, scikit-learn 1.6, XGBoost 3.2, spaCy 3.8, pandas 2.3, numpy 2.0.
+
+---
+
+## Known issues
+
+- **`doc_id` collision (0.002%, 1 out of ~85,650 rows):** tweets with missing `tweet_id` share a placeholder URL, collapsing the upstream hash. Currently handled by deduplicating on `doc_id`. Planned fix: switch to a content-based hash (`md5(text + published_at)`).
+
+---
+
+## Future work
+
+- Patch the `doc_id` hashing to content-based keys
+- Extend beyond TSLA to other high-volatility tickers
+- Re-evaluate sentiment contribution outside regime-shift periods
+- Convert this work into a conference/journal paper (ACM ICAIF, IEEE ICMLA, FinNLP, *Expert Systems with Applications*) and submit an arXiv preprint
+
+---
+
+## Citation
+
+If you use this work, please cite the accompanying thesis (citation details to be added upon publication).
+
+## License
+
+Specify a license here (e.g. MIT) if you intend the repo to be reused.

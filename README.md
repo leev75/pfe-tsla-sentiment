@@ -132,6 +132,3 @@ Notebooks were developed on Kaggle (T4 GPU) with hardcoded `/kaggle/input/` and 
 
 If you use this work, please cite the accompanying thesis (citation details to be added upon publication).
 
-## License
-
-Specify a license here (e.g. MIT) if you intend the repo to be reused.

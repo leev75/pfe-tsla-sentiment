@@ -10,7 +10,7 @@ Collect raw financial text and market data for TSLA (Jan 2020 – Dec 2023) acro
 | Reddit (part 1) | `reddit-s1-parquet` | [Kaggle](https://www.kaggle.com/datasets/leev75/reddit-s1-parquet) |
 | Reddit (part 2, 2022) | `reddit-s2-2022-parquet` | [Kaggle](https://www.kaggle.com/datasets/leev75/reddit-s2-2022-parquet) |
 | Reddit (part 3) | `reddit-s3-parquet` | [Kaggle](https://www.kaggle.com/datasets/leev75/reddit-s3-parquet) |
-| Twitter (general) | `layer1` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer1) |
+| Twitter (general) | `tsla-twitter-general` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer1) |
 | News | `layer1-newsupdated` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer1-newsupdated) |
 
 > **Note:** Reddit is split across 3 datasets due to Kaggle upload size limits — concatenate them before use.

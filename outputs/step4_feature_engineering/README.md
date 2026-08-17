@@ -7,7 +7,7 @@ Convert per-document sentiment scores and raw price data into a daily feature ma
 
 | Content | Dataset | Link |
 |---|---|---|
-| Final feature/target matrix | `test999` | [Kaggle](https://www.kaggle.com/datasets/leev75/test999) |
+| Final feature/target matrix | `features_targets_final_clean` | [Kaggle](https://www.kaggle.com/datasets/leev75/test999) |
 
 > **Naming note:** consider renaming this dataset on Kaggle to something like `tsla-features-targets` for clarity before final submission/publication — `test999` won't read well in a thesis or paper appendix.
 

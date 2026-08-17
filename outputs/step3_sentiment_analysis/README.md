@@ -7,7 +7,7 @@ Score every document in the cleaned corpus for sentiment, and benchmark four app
 
 | Content | Dataset | Link |
 |---|---|---|
-| Baseline inference + FinBERT sentiment outputs | `layer2-multimodel` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer2-multimodel) |
+| Baseline inference + FinBERT sentiment outputs | `tsla-sentiment-multimodel` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer2-multimodel) |
 
 ## Models compared
 | Model | Macro-F1 (200-doc TSLA manual test set) |

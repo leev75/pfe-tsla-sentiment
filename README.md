@@ -43,7 +43,6 @@ This project builds a full pipeline — from raw text collection to trading-sign
 ### Repo structure
 
 ```
-├── app/                     # Streamlit dashboard source
 ├── docs/                    # Thesis (LaTeX + PDF)
 ├── notebooks/               # Kaggle notebooks, one per pipeline stage (01–11)
 ├── outputs/                 # Per-step figures + README with dataset links (raw data lives on Kaggle)
@@ -52,13 +51,13 @@ This project builds a full pipeline — from raw text collection to trading-sign
 │   ├── step3_sentiment_analysis/
 │   ├── step4_feature_engineering/
 │   └── step5_prediction/
-├── src/                      # Reusable modules (data, nlp, sentiment, prediction)
-├── .env.example
 ├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
 
+> **Note on scope:** this repo holds the research pipeline (notebooks, outputs, thesis). The Streamlit dashboard is deployed directly from Streamlit Cloud and isn't hosted as source code in this repo — see the live link above.
+>
 > **Note on data:** raw and intermediate datasets are hosted on Kaggle rather than committed to this repo (large parquet files). See the **Datasets** section below for links, or each step's `outputs/stepX/README.md` for the ones specific to that stage.
 
 ---
@@ -115,20 +114,14 @@ All raw and intermediate datasets are hosted on Kaggle. Full context for each is
 
 ## Dashboard
 
-A 4-page Streamlit app for exploring the results interactively:
+A 4-page Streamlit app for exploring the results interactively, deployed live at the link above:
 
 - **Overview** — corpus and dataset summary
 - **Sentiment Analysis** — model comparison on the manual test set
 - **Model Comparison** — prediction model performance (Sharpe, DA, F1)
 - **Trading Signals** — BUY/SELL/HOLD signals over the test period
 
-Reads from `features_targets_final_clean.parquet`.
-
-Run locally:
-```bash
-pip install -r requirements.txt
-streamlit run dashboard/app.py
-```
+The dashboard reads from the Step 4 feature matrix (see **Datasets** above) and is hosted directly on Streamlit Cloud — no local setup needed to view it.
 
 ---
 
@@ -140,7 +133,7 @@ cd <repo-name>
 pip install -r requirements.txt
 ```
 
-Notebooks were developed on Kaggle (T4 GPU) with hardcoded `/kaggle/input/` and `/kaggle/working/` paths — adjust paths if running elsewhere.
+This installs the dependencies needed to run the notebooks in `notebooks/`. Notebooks were developed on Kaggle (T4 GPU) with hardcoded `/kaggle/input/` and `/kaggle/working/` paths — update these paths if running elsewhere, and download the relevant dataset from the **Datasets** section above into your input path first.
 
 **Core dependencies:** Python 3.12, PyTorch 2.10 (cu128), Transformers 5.0, scikit-learn 1.6, XGBoost 3.2, spaCy 3.8, pandas 2.3, numpy 2.0.
 

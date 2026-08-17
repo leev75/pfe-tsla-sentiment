@@ -7,8 +7,8 @@ Clean and normalize the raw 4-source corpus so it can be consistently fed into t
 
 | Content | Dataset | Link |
 |---|---|---|
-| Cleaned layer (post source-specific cleaning) | `layer2-cleaned` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer2-cleaned) |
-| Fully preprocessed layer (`layer2_preprocessed`) | `processd` | [Kaggle](https://www.kaggle.com/datasets/leev75/processd) |
+| Cleaned layer (post source-specific cleaning) | `tsla-layer2-cleaned` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer2-cleaned) |
+| Fully preprocessed layer (`layer2_preprocessed`) | `tsla-layer2-preprocessed` | [Kaggle](https://www.kaggle.com/datasets/leev75/processd) |
 
 ## Processing applied
 - Text cleaning (HTML/URL stripping, encoding fixes), done per-source before merging

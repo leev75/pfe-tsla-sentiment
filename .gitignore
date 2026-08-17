@@ -1,35 +1,69 @@
-# Data files - do not commit raw data to GitHub
-data/raw/
-data/processed/
-*.parquet
-*.csv
-*.json
-
-# Python
+# --- Python ---
 __pycache__/
 *.py[cod]
 *.egg-info/
-.env
+.eggs/
+build/
+dist/
+*.egg
+
+# --- Virtual environments ---
 venv/
 .venv/
+env/
+ENV/
 
-# Jupyter checkpoints
+# --- Jupyter / notebooks ---
 .ipynb_checkpoints/
+*.ipynb_checkpoints
 
-# OS
+# --- Kaggle working directory artifacts ---
+/kaggle/working/
+*.log
+
+# --- Data (hosted on Kaggle, not committed here) ---
+*.parquet
+*.csv
+*.tsv
+*.json
+!requirements.txt
+data/
+raw/
+processed/
+
+# --- Model artifacts / large binaries ---
+*.pt
+*.pth
+*.bin
+*.h5
+*.ckpt
+*.pkl
+*.joblib
+models/
+
+# --- LaTeX build artifacts (docs/) ---
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.xdv
+
+# --- OS / editor ---
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.swp
 
-# Local project files
-CLAUDE.md
-Audit.txt
-
-# Outputs (optional - keep figures, ignore model weights)
-outputs/models/
-*.pkl
-*.h5
-*.pt
-
-# Keep these
-!data/.gitkeep
-!outputs/figures/.gitkeep
+# --- Secrets (in case any config/env file is reintroduced later) ---
+.env
+*.env.local

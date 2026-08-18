@@ -1,13 +1,14 @@
-# PFE — Financial News Sentiment & TSLA Market Trend Prediction
+# TSLA Sentiment & Market Prediction
 
 A Machine Learning Approach to Financial News Sentiment and Market Trend Prediction (TSLA, Jan 2020 – Dec 2023).
+Project for the *Projet Multidisciplinaire* course.
 
 End-to-end pipeline: raw financial text (news, Twitter/Musk stream, Reddit, StockTwits) → NLP preprocessing → FinBERT-based sentiment scoring → feature engineering → LSTM+Attention / Random Forest / XGBoost market prediction, deployed as a live Streamlit dashboard.
 
 **Author:** Khelil Dhiaeddine — 4th-year Data Science Engineering, University of Blida 1
 **Supervisor:** Nesrine Lahiani
 
-**Live demo:** [pfe-tsla-sentiment Streamlit dashboard](https://pfe-tsla-sentiment-khpifztqkqztwuosxsmtc4.streamlit.app)
+**Live demo:** [TSLA sentiment & market prediction Streamlit dashboard](https://pfe-tsla-sentiment-khpifztqkqztwuosxsmtc4.streamlit.app)
 
 ---
 
@@ -25,14 +26,14 @@ End-to-end pipeline: raw financial text (news, Twitter/Musk stream, Reddit, Stoc
 ## Repository Structure
 
 ```
-pfe-tsla-sentiment/
+tsla-sentiment-market-prediction/
 ├── app/                              # Streamlit dashboard (deployed app)
 │   ├── app.py                        # Dashboard entry point
 │   ├── features_targets_final_clean.parquet  # Final feature/target matrix used by the app
 │   └── requirements.txt              # App-specific dependencies (Streamlit Cloud)
 │
 ├── docs/                             # Written deliverables
-│   └── financial_sentimnet.pdf       # Thesis / project report
+│   └── financial_sentimnet.pdf       # Project report
 │
 ├── notebooks/                        # End-to-end pipeline, one notebook per stage
 │   ├── 01_data_collection.ipynb
@@ -89,7 +90,7 @@ pip install -r requirements.txt
 
 ## Documentation
 
-Full methodology, literature review, system design, implementation details, and results are documented in the thesis report: [`docs/financial_sentimnet.pdf`](docs/financial_sentimnet.pdf).
+Full methodology, literature review, system design, implementation details, and results are documented in the project report: [`docs/financial_sentimnet.pdf`](docs/financial_sentimnet.pdf).
 
 ---
 
@@ -102,4 +103,4 @@ Full methodology, literature review, system design, implementation details, and 
 
 ## Citation
 
-If you use this work, please cite the accompanying thesis (Khelil Dhiaeddine, University of Blida 1, supervised by Nesrine Lahiani).
+If you use this work, please cite the accompanying report (Khelil Dhiaeddine, University of Blida 1, supervised by Nesrine Lahiani).

@@ -1,163 +1,105 @@
-# A Machine Learning Approach to Financial News Sentiment and Market Trend Prediction
+# PFE — Financial News Sentiment & TSLA Market Trend Prediction
 
-End-to-end ML pipeline that combines financial sentiment analysis with market prediction, applied to Tesla (TSLA) stock, January 2020 – December 2023.
+A Machine Learning Approach to Financial News Sentiment and Market Trend Prediction (TSLA, Jan 2020 – Dec 2023).
+
+End-to-end pipeline: raw financial text (news, Twitter/Musk stream, Reddit, StockTwits) → NLP preprocessing → FinBERT-based sentiment scoring → feature engineering → LSTM+Attention / Random Forest / XGBoost market prediction, deployed as a live Streamlit dashboard.
 
 **Author:** Khelil Dhiaeddine — 4th-year Data Science Engineering, University of Blida 1
 **Supervisor:** Nesrine Lahiani
-**Teacher:** Hadjer Ykhlef
 
-🔗 **Live dashboard:** [Streamlit App](https://pfe-tsla-sentiment-khpifztqkqztwuosxsmtc4.streamlit.app)
-
----
-
-## Overview
-
-This project builds a full pipeline — from raw text collection to trading-signal generation — to test whether financial sentiment (news, Reddit, Twitter) adds predictive value on top of price-based features for TSLA stock, using rigorous trading-focused evaluation (Sharpe ratio, walk-forward CV) instead of accuracy alone.
-
-### Key novelties
-
-1. **FinBERT vs. TF-IDF, with domain-shift quantified** — FinBERT reaches macro-F1 = 0.403 on a 200-doc manual TSLA test set (vs. TF-IDF+LR = 0.380, TF-IDF+SVM = 0.364, VADER = 0.355), and we explicitly measure the in-domain → out-of-domain performance drop for classical models (LR: −0.427pp, SVM: −0.443pp).
-2. **LSTM + Bahdanau Attention evaluated with trading metrics** — Sharpe ratio and walk-forward cross-validation, not just classification accuracy.
-3. **Four-source corpus** (news, Reddit, general Twitter, Musk-specific Twitter) — 85,649 documents total, with the Musk stream architecturally separated as an independent signal.
-
-### Research gaps addressed
-
-| Gap | Description |
-|---|---|
-| Gap 1 | Prior work relies on single-source datasets |
-| Gap 2 | Prior evaluations lack trading-relevant metrics |
-| Gap 3 | Domain-shift cost of sentiment models is rarely quantified |
+**Live demo:** [pfe-tsla-sentiment Streamlit dashboard](https://pfe-tsla-sentiment-khpifztqkqztwuosxsmtc4.streamlit.app)
 
 ---
 
-## Pipeline
+## Project Highlights
+
+- **85,649 documents** collected across 4 sources (financial news, Twitter/Musk stream, Reddit, StockTwits)
+- **FinBERT** sentiment scoring vs. 3 classical baselines (TF-IDF+LR, TF-IDF+SVM, VADER), with domain-shift quantified
+- **995 × 237 feature matrix**: same-day, lag, rolling, momentum, and EMA sentiment/price features
+- **LSTM + Bahdanau Attention**, Random Forest, and XGBoost predictors evaluated with walk-forward cross-validation and Sharpe Ratio, not just accuracy
+- **Best result:** XGBoost (price-only) — Sharpe = 5.71, Directional Accuracy = 0.530 on the 2023 held-out test year
+- Deployed as an interactive **Streamlit dashboard** for exploring sentiment, features, and predictions
+
+---
+
+## Repository Structure
 
 ```
-1. Data Collection      → news, Reddit, Twitter (general + Musk), stock prices
-2. NLP Preprocessing    → cleaning, tokenization, lemmatization, NER
-3. Sentiment Analysis   → FinBERT / TF-IDF+LR / TF-IDF+SVM / VADER
-4. Feature Engineering  → 237 features (same-day, lag, rolling, momentum, EMA)
-5. Market Prediction    → XGBoost, Random Forest, LSTM, LSTM+Attention
-```
-
-### Repo structure
-
-```
-├── docs/                    # Thesis (LaTeX + PDF)
-├── notebooks/               # Kaggle notebooks, one per pipeline stage (01–11)
-├── outputs/                 # Per-step figures + README with dataset links (raw data lives on Kaggle)
-│   ├── step1_data_collection/
-│   ├── step2_nlp_preprocessing/
-│   ├── step3_sentiment_analysis/
-│   ├── step4_feature_engineering/
-│   └── step5_prediction/
+pfe-tsla-sentiment/
+├── app/                              # Streamlit dashboard (deployed app)
+│   ├── app.py                        # Dashboard entry point
+│   ├── features_targets_final_clean.parquet  # Final feature/target matrix used by the app
+│   └── requirements.txt              # App-specific dependencies (Streamlit Cloud)
+│
+├── docs/                             # Written deliverables
+│   └── financial_sentimnet.pdf       # Thesis / project report
+│
+├── notebooks/                        # End-to-end pipeline, one notebook per stage
+│   ├── 01_data_collection.ipynb
+│   ├── 02_nlp_preprocessing.ipynb
+│   ├── 03_sentiment_analysis.ipynb
+│   ├── 04_feature_engineering.ipynb
+│   └── 05_market_prediction.ipynb
+│
+├── outputs/                           # Versioned artifacts produced by each notebook
+│   ├── step1_data_collection/         # Raw + cleaned corpus (4 sources, 85,649 docs)
+│   ├── step2_nlp_preprocessing/       # Two-track preprocessing outputs (raw text + lemmatized tokens)
+│   ├── step3_sentiment_analysis/      # FinBERT + baseline sentiment scores, evaluation metrics
+│   ├── step4_feature_engineering/     # daily_sentiment.parquet, features_targets.parquet
+│   └── step5_prediction/              # Trained model outputs, predictions, evaluation results
+│
 ├── .gitignore
-├── requirements.txt
-└── README.md
+├── README.md                          # You are here
+└── requirements.txt                   # Root/pipeline dependencies (Kaggle notebooks)
 ```
 
-> **Note on scope:** this repo holds the research pipeline (notebooks, outputs, thesis). The Streamlit dashboard is deployed directly from Streamlit Cloud and isn't hosted as source code in this repo — see the live link above.
->
-> **Note on data:** raw and intermediate datasets are hosted on Kaggle rather than committed to this repo (large parquet files). See the **Datasets** section below for links, or each step's `outputs/stepX/README.md` for the ones specific to that stage.
+---
+
+## Pipeline Overview
+
+| Step | Notebook | Description | Key Output |
+|------|----------|-------------|------------|
+| 1 | `01_data_collection.ipynb` | Collects financial news, Twitter/Musk stream, Reddit, and StockTwits data for TSLA | `outputs/step1_data_collection/` — 85,649 documents |
+| 2 | `02_nlp_preprocessing.ipynb` | Two-track NLP cleaning: raw text preserved for FinBERT, lemmatized tokens for classical baselines | `outputs/step2_nlp_preprocessing/` |
+| 3 | `03_sentiment_analysis.ipynb` | FinBERT sentiment scoring + TF-IDF/VADER baselines, domain-shift analysis | `outputs/step3_sentiment_analysis/` |
+| 4 | `04_feature_engineering.ipynb` | Builds daily sentiment indices and joins with TSLA price data (NYSE 16:00 EST cutoff) | `outputs/step4_feature_engineering/` — 995×237 feature matrix |
+| 5 | `05_market_prediction.ipynb` | Trains LSTM+Attention, Random Forest, XGBoost; walk-forward CV; Sharpe Ratio evaluation | `outputs/step5_prediction/` |
+
+The `app/` folder consumes the final cleaned feature/target matrix (`features_targets_final_clean.parquet`) produced at the end of Step 4/5 to power the Streamlit dashboard, independent of the Kaggle notebook environment.
 
 ---
 
-## Results summary
-
-**Sentiment classification** (200-doc manual TSLA test set):
-
-| Model | Macro-F1 |
-|---|---|
-| FinBERT | 0.403 [0.33, 0.47] |
-| TF-IDF + LR | 0.380 |
-| TF-IDF + SVM | 0.364 |
-| VADER | 0.355 |
-
-**Market prediction** (2023 test set, Sharpe ratio):
-
-| Model | Sharpe | Directional Accuracy | F1 |
-|---|---|---|---|
-| **XGBoost (price-only)** | **5.71** | 0.530 | 0.400 |
-| Random Forest (price-only) | 4.65 | — | — |
-| LSTM + Attention (price-only) | 3.65 | — | — |
-| LSTM (price-only) | 3.49 | — | — |
-| Buy-and-hold | 2.47 | — | — |
-
-Full-feature models (sentiment + price) underperform price-only models across the board in 2023 — attributed to a market regime shift and a Twitter coverage gap that let sentiment features add noise rather than signal. The attention-based full-feature model collapses to zero BUY predictions, a curse-of-dimensionality effect (237 features vs. ~750 training rows).
-
-Full methodology, dataset statistics, and discussion are in [`docs/thesis.pdf`](docs/thesis.pdf).
-
----
-
-## Datasets
-
-All raw and intermediate datasets are hosted on Kaggle. Full context for each is in the corresponding `outputs/stepX/README.md`.
-
-| Step | Content | Dataset | Link |
-|---|---|---|---|
-| 1 | Reddit (part 1) | `reddit-s1-parquet` | [Kaggle](https://www.kaggle.com/datasets/leev75/reddit-s1-parquet) |
-| 1 | Reddit (part 2, 2022) | `reddit-s2-2022-parquet` | [Kaggle](https://www.kaggle.com/datasets/leev75/reddit-s2-2022-parquet) |
-| 1 | Reddit (part 3) | `reddit-s3-parquet` | [Kaggle](https://www.kaggle.com/datasets/leev75/reddit-s3-parquet) |
-| 1 | Twitter (general) | `layer1` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer1) |
-| 1 | News | `layer1-newsupdated` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer1-newsupdated) |
-| 2 | Cleaned layer | `layer2-cleaned` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer2-cleaned) |
-| 2 | Preprocessed layer | `processd` | [Kaggle](https://www.kaggle.com/datasets/leev75/processd) |
-| 3 | Baseline + FinBERT sentiment | `layer2-multimodel` | [Kaggle](https://www.kaggle.com/datasets/leev75/layer2-multimodel) |
-| 4 | Final feature/target matrix | `test999` | [Kaggle](https://www.kaggle.com/datasets/leev75/test999) |
-| 5 | Prediction outputs | — | not yet published |
-
-**Known gaps:**
-- The Musk Twitter stream (Step 1) doesn't have a public Kaggle dataset yet, despite being architecturally separated as a core novelty of this project.
-- Step 5 has no standalone dataset — models train directly from the Step 4 `test999` matrix.
-
----
-
-## Dashboard
-
-A 4-page Streamlit app for exploring the results interactively, deployed live at the link above:
-
-- **Overview** — corpus and dataset summary
-- **Sentiment Analysis** — model comparison on the manual test set
-- **Model Comparison** — prediction model performance (Sharpe, DA, F1)
-- **Trading Signals** — BUY/SELL/HOLD signals over the test period
-
-The dashboard reads from the Step 4 feature matrix (see **Datasets** above) and is hosted directly on Streamlit Cloud — no local setup needed to view it.
-
----
-
-## Setup
+## Running the Dashboard Locally
 
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+cd app
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+## Running the Pipeline
+
+The notebooks in `notebooks/` are Kaggle-compatible (hardcoded `/kaggle/input/` and `/kaggle/working/` paths) and are intended to be run in order, 01 → 05, on a GPU-enabled Kaggle kernel (developed on a T4 GPU). Each notebook writes its artifacts to the corresponding `outputs/stepN_*/` folder for the next step to consume.
+
+```bash
 pip install -r requirements.txt
 ```
 
-This installs the dependencies needed to run the notebooks in `notebooks/`. Notebooks were developed on Kaggle (T4 GPU) with hardcoded `/kaggle/input/` and `/kaggle/working/` paths — update these paths if running elsewhere, and download the relevant dataset from the **Datasets** section above into your input path first.
+---
 
-**Core dependencies:** Python 3.12, PyTorch 2.10 (cu128), Transformers 5.0, scikit-learn 1.6, XGBoost 3.2, spaCy 3.8, pandas 2.3, numpy 2.0.
+## Documentation
+
+Full methodology, literature review, system design, implementation details, and results are documented in the thesis report: [`docs/financial_sentimnet.pdf`](docs/financial_sentimnet.pdf).
 
 ---
 
-## Known issues
+## Known Limitations
 
-- **`doc_id` collision (0.002%, 1 out of ~85,650 rows):** tweets with missing `tweet_id` share a placeholder URL, collapsing the upstream hash. Currently handled by deduplicating on `doc_id`. Planned fix: switch to a content-based hash (`md5(text + published_at)`).
-
----
-
-## Future work
-
-- Patch the `doc_id` hashing to content-based keys
-- Extend beyond TSLA to other high-volatility tickers
-- Re-evaluate sentiment contribution outside regime-shift periods
-- Convert this work into a conference/journal paper (ACM ICAIF, IEEE ICMLA, FinNLP, *Expert Systems with Applications*) and submit an arXiv preprint
+- A small `doc_id` collision (1 out of ~85,650 rows, ~0.002%) occurs for tweets missing a `tweet_id`, which collapse to a shared placeholder URL upstream. Current handling: deduplicate on `doc_id`, keeping the first occurrence (see Step 3 preprocessing notebook).
+- Sentiment features add noise rather than signal during the 2023 test period, likely due to a market regime shift and a gap in Twitter/Musk-stream coverage; price-only models outperform full-feature (sentiment + price) models in this window.
 
 ---
 
 ## Citation
 
-If you use this work, please cite the accompanying thesis (citation details to be added upon publication).
-
-## License
-
-Specify a license here (e.g. MIT) if you intend the repo to be reused.
+If you use this work, please cite the accompanying thesis (Khelil Dhiaeddine, University of Blida 1, supervised by Nesrine Lahiani).
